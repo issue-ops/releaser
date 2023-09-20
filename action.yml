@@ -1,0 +1,59 @@
+name: IssueOps Releaser
+description: Handle releases for GitHub repositories
+author: Nick Alteen
+
+branding:
+  icon: check-square
+  color: blue
+
+inputs:
+  draft:
+    description: Whether or not the release should be a draft.
+    required: false
+    default: 'false'
+  generate_release_notes:
+    description: Whether or not to generate release notes.
+    required: false
+    default: 'true'
+  name:
+    description: The name of the release. Defaults to the tag name.
+    required: false
+  notes:
+    description:
+      The release notes. Will be prepended to the generated release notes if
+      generate_release_notes is enabled.
+    required: false
+  owner:
+    description: The owner of the repository.
+    required: true
+    default: ${{ github.event.repository.owner.login }}
+  prerelease:
+    description: Whether or not the release should be a prerelease.
+    required: false
+    default: 'false'
+  repo:
+    description: The repository to create the release in.
+    required: true
+    default: ${{ github.event.repository.name }}
+  tag:
+    description:
+      The tag to create the release from. If the tag does not exist, it will be
+      created at the branch or commit specified by target_commitish.
+    required: true
+  target_commitish:
+    description:
+      The branch name or commit SHA to create the release from. This is ignored
+      if the tag already exists in the repository.
+    required: false
+
+outputs:
+  id:
+    description: The release ID
+  html_url:
+    description: The URL to the release in the browser
+  upload_url:
+    description: The URL to upload assets to the release
+
+runs:
+  using: node20
+  main: dist/index.js
