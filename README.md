@@ -3,6 +3,7 @@
 [![Check dist/](https://github.com/issue-ops/releaser/actions/workflows/check-dist.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/check-dist.yml)
 [![CodeQL](https://github.com/issue-ops/releaser/actions/workflows/codeql.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/codeql.yml)
 [![Continuous Integration](https://github.com/issue-ops/releaser/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/continuous-integration.yml)
+[![Continuous Deployment](https://github.com/issue-ops/releaser/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/continuous-deployment.yml)
 [![Super Linter](https://github.com/issue-ops/releaser/actions/workflows/super-linter.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/super-linter.yml)
 [![Code Coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
@@ -18,8 +19,8 @@ When developing with
 [GitHub flow](https://docs.github.com/en/get-started/quickstart/github-flow),
 changes are submitted through a pull request (PR) and eventually merged into the
 default branch (e.g. `main`). Using [Semantic Versioning](https://semver.org/),
-merging breaking changes, new features, or bug fixes constitutes a version
-change and, depending on your strategy, a new release. This action automates the
+merging breaking changes, new features, or bugfixes constitutes a version change
+and, depending on your strategy, a new release. This action automates the
 creation of releases based on provided version tags and/or "commitish" values
 (commit SHAs and branch names).
 
