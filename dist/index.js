@@ -6753,18 +6753,23 @@ async function run() {
     // Create the Octokit client
     const github = new rest_1.Octokit({ auth: process.env.GITHUB_TOKEN });
     try {
-        // Create the release
-        const response = await github.rest.repos.createRelease({
+        // Create the API options
+        const options = {
             owner,
             repo,
             tag_name: tag,
-            target_commitish: target === '' ? undefined : target,
             name,
-            body: notes === '' ? undefined : notes,
             draft,
             prerelease,
             generate_release_notes: generateReleaseNotes
-        });
+        };
+        // Only add these options if they were provided
+        if (target !== '')
+            options.target_commitish = target;
+        if (notes !== '')
+            options.body = notes;
+        // Create the release
+        const response = await github.rest.repos.createRelease(options);
         core.debug(`Response: ${JSON.stringify(response, null, 2)}`);
         // Get the ID, html_url, and upload URL for the release
         const release = {
