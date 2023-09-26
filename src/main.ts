@@ -38,18 +38,23 @@ export async function run(): Promise<void> {
   const github: Octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
   try {
-    // Create the release
-    const response = await github.rest.repos.createRelease({
+    // Create the API options
+    const options: any = {
       owner,
       repo,
       tag_name: tag,
-      target_commitish: target === '' ? undefined : target,
       name,
-      body: notes === '' ? undefined : notes,
       draft,
       prerelease,
       generate_release_notes: generateReleaseNotes
-    })
+    }
+
+    // Only add these options if they were provided
+    if (target !== '') options.target_commitish = target
+    if (notes !== '') options.body = notes
+
+    // Create the release
+    const response = await github.rest.repos.createRelease(options)
 
     core.debug(`Response: ${JSON.stringify(response, null, 2)}`)
 
