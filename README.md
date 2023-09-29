@@ -137,6 +137,8 @@ jobs:
 |                          | Default: `false`                                  |
 | `generate_release_notes` | Whether or not to generate release notes          |
 |                          | Default: `true`                                   |
+| `github_token`           | The token to use for authentication               |
+|                          | Default: `${{ github.token }}`                    |
 | `name`                   | The name of the release                           |
 |                          | Default: The `tag` value                          |
 | `notes`                  | The release notes, prepended to the generated     |
