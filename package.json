@@ -1,7 +1,7 @@
 {
   "name": "releaser",
   "description": "Handle releases for GitHub repositories",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Nick Alteen <ncalteen@github.com>",
   "homepage": "https://github.com/issue-ops/releaser#readme",
   "repository": {

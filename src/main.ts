@@ -21,6 +21,7 @@ export async function run(): Promise<void> {
     .getInput('tag', { required: true })
     .replace('refs/tags/', '')
   const target: string = core.getInput('target_commitish')
+  const token: string = core.getInput('github_token', { required: true })
 
   // Log the inputs
   core.info('Running action with the following inputs:')
@@ -35,7 +36,7 @@ export async function run(): Promise<void> {
   core.info(`  target: ${target}`)
 
   // Create the Octokit client
-  const github: Octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
+  const github: Octokit = new Octokit({ auth: token })
 
   try {
     // Create the API options
