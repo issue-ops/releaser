@@ -6739,6 +6739,7 @@ async function run() {
         .getInput('tag', { required: true })
         .replace('refs/tags/', '');
     const target = core.getInput('target_commitish');
+    const token = core.getInput('github_token', { required: true });
     // Log the inputs
     core.info('Running action with the following inputs:');
     core.info(`  draft: ${draft}`);
@@ -6751,7 +6752,7 @@ async function run() {
     core.info(`  tag: ${tag}`);
     core.info(`  target: ${target}`);
     // Create the Octokit client
-    const github = new rest_1.Octokit({ auth: process.env.GITHUB_TOKEN });
+    const github = new rest_1.Octokit({ auth: token });
     try {
         // Create the API options
         const options = {

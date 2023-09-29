@@ -15,6 +15,10 @@ inputs:
     description: Whether or not to generate release notes.
     required: false
     default: 'true'
+  github_token:
+    description: The GitHub token to use for authentication.
+    required: true
+    default: ${{ github.token }}
   name:
     description: The name of the release. Defaults to the tag name.
     required: false
