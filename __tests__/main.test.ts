@@ -262,7 +262,6 @@ describe('action', () => {
     try {
       expect(await main.run()).toThrow('Error creating release')
     } catch (error) {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(setFailedMock).toHaveBeenCalledWith('Error creating release')
     }
   })
