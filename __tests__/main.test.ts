@@ -6,12 +6,12 @@ import * as core from '@actions/core'
 import * as main from '../src/main'
 
 // Mock the GitHub Actions core library
-const getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-const setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-const setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+let getInputMock: jest.SpyInstance
+let setFailedMock: jest.SpyInstance
+let setOutputMock: jest.SpyInstance
 
 // Mock the action's main function
-const runMock = jest.spyOn(main, 'run')
+let runMock: jest.SpyInstance
 
 // Mock Octokit
 jest.mock('@octokit/rest', () => ({
@@ -21,6 +21,12 @@ jest.mock('@octokit/rest', () => ({
 describe('action', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
+    getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
+    setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
+    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
+
+    runMock = jest.spyOn(main, 'run')
   })
 
   it('reads valid inputs', async () => {
