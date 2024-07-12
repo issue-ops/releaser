@@ -1,5 +1,5 @@
 /**
- * A GitHub Release
+ * GitHub Release
  */
 export interface Release {
   id: number

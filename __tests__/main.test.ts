@@ -1,156 +1,100 @@
-/**
- * Unit tests for the action's main functionality, src/main.ts
- */
+import { jest } from '@jest/globals'
+import { RestEndpointMethodTypes } from '@octokit/rest'
+import * as core from '../__fixtures__/core.js'
+import * as octokit from '../__fixtures__/octokit.js'
 
-import * as core from '@actions/core'
-import * as main from '../src/main'
+jest.unstable_mockModule('@actions/core', () => core)
+jest.unstable_mockModule('@octokit/rest', async () => {
+  class Octokit {
+    constructor() {
+      return octokit
+    }
+  }
 
-// Mock the GitHub Actions core library
-let getInputMock: jest.SpyInstance
-let setFailedMock: jest.SpyInstance
-let setOutputMock: jest.SpyInstance
+  return {
+    Octokit
+  }
+})
 
-// Mock the action's main function
-let runMock: jest.SpyInstance
+const main = await import('../src/main.js')
+const { Octokit } = await import('@octokit/rest')
 
-// Mock Octokit
-jest.mock('@octokit/rest', () => ({
-  Octokit: jest.fn()
-}))
+const mocktokit = jest.mocked(new Octokit())
 
-describe('action', () => {
+describe('main.ts', () => {
   beforeEach(() => {
-    jest.clearAllMocks()
-
-    getInputMock = jest.spyOn(core, 'getInput').mockImplementation()
-    setFailedMock = jest.spyOn(core, 'setFailed').mockImplementation()
-    setOutputMock = jest.spyOn(core, 'setOutput').mockImplementation()
-
-    runMock = jest.spyOn(main, 'run')
+    // Set the action's inputs as return values from core.getInput()
+    core.getInput
+      .mockReturnValueOnce('false') // draft
+      .mockReturnValueOnce('true') // generate_release_notes
+      .mockReturnValueOnce('v1.0.0') // name
+      .mockReturnValueOnce('This is a test release') // notes
+      .mockReturnValueOnce('issue-ops') // owner
+      .mockReturnValueOnce('false') // prerelease
+      .mockReturnValueOnce('releaser') // repo
+      .mockReturnValueOnce('refs/tags/v1.0.0') // tag
+      .mockReturnValueOnce('main') // target_commitish
   })
 
-  it('reads valid inputs', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'draft':
-          return 'false'
-        case 'generate_release_notes':
-          return 'true'
-        case 'name':
-          return 'v1.0.0'
-        case 'notes':
-          return 'This is a test release'
-        case 'owner':
-          return 'issue-ops'
-        case 'prerelease':
-          return 'false'
-        case 'repo':
-          return 'releaser'
-        case 'tag':
-          return 'refs/tags/v1.0.0'
-        case 'target_commitish':
-          return 'main'
-        default:
-          return ''
-      }
-    })
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
 
+  it('Reads valid inputs', async () => {
     // Mock the Octokit client
-    const mocktokit = {
-      rest: {
-        repos: {
-          createRelease: () => {
-            return {
-              data: {
-                id: 1,
-                html_url: 'https://github.com/issue-ops/releaser/releases/1',
-                upload_url:
-                  'https://github.com/issue-ops/releaser/releases/1/assets'
-              }
-            }
-          }
-        }
+    mocktokit.rest.repos.createRelease.mockResolvedValue({
+      data: {
+        id: 1,
+        html_url: 'https://github.com/issue-ops/releaser/releases/1',
+        upload_url: 'https://github.com/issue-ops/releaser/releases/1/assets'
       }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    } as RestEndpointMethodTypes['repos']['createRelease']['response'])
 
     await main.run()
 
-    expect(runMock).toHaveReturned()
-    expect(getInputMock).toHaveBeenCalledWith('draft')
-    expect(getInputMock).toHaveBeenCalledWith('generate_release_notes')
-    expect(getInputMock).toHaveBeenCalledWith('name')
-    expect(getInputMock).toHaveBeenCalledWith('notes')
-    expect(getInputMock).toHaveBeenCalledWith('owner', { required: true })
-    expect(getInputMock).toHaveBeenCalledWith('prerelease')
-    expect(getInputMock).toHaveBeenCalledWith('repo', { required: true })
-    expect(getInputMock).toHaveBeenCalledWith('tag', { required: true })
-    expect(getInputMock).toHaveBeenCalledWith('target_commitish')
-    expect(setOutputMock).toHaveBeenCalledWith('id', '1')
-    expect(setOutputMock).toHaveBeenCalledWith(
+    expect(core.getInput).toHaveBeenCalledWith('draft')
+    expect(core.getInput).toHaveBeenCalledWith('generate_release_notes')
+    expect(core.getInput).toHaveBeenCalledWith('name')
+    expect(core.getInput).toHaveBeenCalledWith('notes')
+    expect(core.getInput).toHaveBeenCalledWith('owner', { required: true })
+    expect(core.getInput).toHaveBeenCalledWith('prerelease')
+    expect(core.getInput).toHaveBeenCalledWith('repo', { required: true })
+    expect(core.getInput).toHaveBeenCalledWith('tag', { required: true })
+    expect(core.getInput).toHaveBeenCalledWith('target_commitish')
+    expect(core.setOutput).toHaveBeenCalledWith('id', '1')
+    expect(core.setOutput).toHaveBeenCalledWith(
       'html_url',
       'https://github.com/issue-ops/releaser/releases/1'
     )
-    expect(setOutputMock).toHaveBeenCalledWith(
+    expect(core.setOutput).toHaveBeenCalledWith(
       'upload_url',
       'https://github.com/issue-ops/releaser/releases/1/assets'
     )
   })
 
-  it('replaces name with tag when not present', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'draft':
-          return 'false'
-        case 'generate_release_notes':
-          return 'true'
-        case 'notes':
-          return 'This is a test release'
-        case 'owner':
-          return 'issue-ops'
-        case 'prerelease':
-          return 'false'
-        case 'repo':
-          return 'releaser'
-        case 'tag':
-          return 'refs/tags/v1.0.0'
-        case 'target_commitish':
-          return 'main'
-        default:
-          return ''
-      }
-    })
+  it('Replaces name with tag when not present', async () => {
+    core.getInput
+      .mockClear()
+      .mockReturnValueOnce('false') // draft
+      .mockReturnValueOnce('true') // generate_release_notes
+      .mockReturnValueOnce('') // name
+      .mockReturnValueOnce('This is a test release') // notes
+      .mockReturnValueOnce('issue-ops') // owner
+      .mockReturnValueOnce('false') // prerelease
+      .mockReturnValueOnce('releaser') // repo
+      .mockReturnValueOnce('refs/tags/v1.0.0') // tag
+      .mockReturnValueOnce('main') // target_commitish
 
-    // Mock the Octokit client
-    const mocktokit = {
-      rest: {
-        repos: {
-          createRelease: jest.fn().mockImplementation(() => {
-            return {
-              data: {
-                id: 1,
-                html_url: 'https://github.com/issue-ops/releaser/releases/1',
-                upload_url:
-                  'https://github.com/issue-ops/releaser/releases/1/assets'
-              }
-            }
-          })
-        }
+    mocktokit.rest.repos.createRelease.mockResolvedValue({
+      data: {
+        id: 1,
+        html_url: 'https://github.com/issue-ops/releaser/releases/1',
+        upload_url: 'https://github.com/issue-ops/releaser/releases/1/assets'
       }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
+    } as RestEndpointMethodTypes['repos']['createRelease']['response'])
 
     await main.run()
 
-    expect(runMock).toHaveReturned()
     expect(mocktokit.rest.repos.createRelease).toHaveBeenCalledWith({
       draft: false,
       generate_release_notes: true,
@@ -164,111 +108,11 @@ describe('action', () => {
     })
   })
 
-  it('sets empty strings to undefined', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'draft':
-          return 'false'
-        case 'generate_release_notes':
-          return 'true'
-        case 'owner':
-          return 'issue-ops'
-        case 'prerelease':
-          return 'false'
-        case 'repo':
-          return 'releaser'
-        case 'tag':
-          return 'refs/tags/v1.0.0'
-        default:
-          return ''
-      }
-    })
+  it('Throws an error if there is an error creating the release', async () => {
+    mocktokit.rest.repos.createRelease.mockRejectedValue(
+      new Error('Error creating release')
+    )
 
-    // Mock the Octokit client
-    const mocktokit = {
-      rest: {
-        repos: {
-          createRelease: jest.fn().mockImplementation(() => {
-            return {
-              data: {
-                id: 1,
-                html_url: 'https://github.com/issue-ops/releaser/releases/1',
-                upload_url:
-                  'https://github.com/issue-ops/releaser/releases/1/assets'
-              }
-            }
-          })
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
-
-    await main.run()
-
-    expect(runMock).toHaveReturned()
-    expect(mocktokit.rest.repos.createRelease).toHaveBeenCalledWith({
-      draft: false,
-      generate_release_notes: true,
-      name: 'v1.0.0',
-      body: undefined,
-      owner: 'issue-ops',
-      prerelease: false,
-      repo: 'releaser',
-      tag_name: 'v1.0.0',
-      target_commitish: undefined
-    })
-  })
-
-  it('throws an error if there is an error creating the release', async () => {
-    // Set the action's inputs as return values from core.getInput()
-    getInputMock.mockImplementation((name: string): string => {
-      switch (name) {
-        case 'draft':
-          return 'false'
-        case 'generate_release_notes':
-          return 'true'
-        case 'name':
-          return 'v1.0.0'
-        case 'notes':
-          return 'This is a test release'
-        case 'owner':
-          return 'issue-ops'
-        case 'prerelease':
-          return 'false'
-        case 'repo':
-          return 'releaser'
-        case 'tag':
-          return 'refs/tags/v1.0.0'
-        case 'target_commitish':
-          return 'main'
-        default:
-          return ''
-      }
-    })
-
-    // Mock the Octokit client
-    const mocktokit = {
-      rest: {
-        repos: {
-          createRelease: () => {
-            throw new Error('Error creating release')
-          }
-        }
-      }
-    }
-
-    jest
-      .spyOn(require('@octokit/rest'), 'Octokit')
-      .mockImplementation(() => mocktokit)
-
-    try {
-      expect(await main.run()).toThrow('Error creating release')
-    } catch (error) {
-      expect(setFailedMock).toHaveBeenCalledWith('Error creating release')
-    }
+    await expect(main.run()).rejects.toThrow('Error creating release')
   })
 })

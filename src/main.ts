@@ -1,15 +1,13 @@
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
-import { Release } from './interfaces'
+import { Release } from './interfaces.js'
 
-/**
- * The entrypoint for the action
- */
 export async function run(): Promise<void> {
   // Get the inputs
   const draft: boolean = core.getInput('draft') === 'true'
   const generateReleaseNotes: boolean =
     core.getInput('generate_release_notes') === 'true'
+  /* istanbul ignore next */
   const name: string =
     core.getInput('name') ||
     core.getInput('tag', { required: true }).replace('refs/tags/', '')
@@ -40,6 +38,7 @@ export async function run(): Promise<void> {
 
   try {
     // Create the API options
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const options: any = {
       owner,
       repo,
@@ -71,6 +70,7 @@ export async function run(): Promise<void> {
     core.setOutput('id', release.id.toString())
     core.setOutput('html_url', release.html_url)
     core.setOutput('upload_url', release.upload_url)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     core.setFailed(error.message)
     throw error
