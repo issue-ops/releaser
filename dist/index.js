@@ -30491,7 +30491,6 @@ async function run() {
     const github = new Octokit({ auth: token });
     try {
         // Create the API options
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const options = {
             owner,
             repo,
@@ -30507,6 +30506,7 @@ async function run() {
         if (notes !== '')
             options.body = notes;
         // Create the release
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = await github.rest.repos.createRelease(options);
         coreExports.debug(`Response: ${JSON.stringify(response, null, 2)}`);
         // Get the ID, html_url, and upload URL for the release
@@ -30522,8 +30522,7 @@ async function run() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
-        coreExports.setFailed(error.message);
-        throw error;
+        return coreExports.setFailed(error.message);
     }
 }
 

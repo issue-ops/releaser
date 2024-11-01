@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { Octokit } from '@octokit/rest'
-import { Release } from './interfaces.js'
+import type { CreateReleaseOptions, Release } from './interfaces.js'
 
 export async function run(): Promise<void> {
   // Get the inputs
@@ -38,8 +38,7 @@ export async function run(): Promise<void> {
 
   try {
     // Create the API options
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const options: any = {
+    const options: CreateReleaseOptions = {
       owner,
       repo,
       tag_name: tag,
@@ -54,7 +53,8 @@ export async function run(): Promise<void> {
     if (notes !== '') options.body = notes
 
     // Create the release
-    const response = await github.rest.repos.createRelease(options)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const response = await github.rest.repos.createRelease(options as any)
 
     core.debug(`Response: ${JSON.stringify(response, null, 2)}`)
 
@@ -72,7 +72,6 @@ export async function run(): Promise<void> {
     core.setOutput('upload_url', release.upload_url)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    core.setFailed(error.message)
-    throw error
+    return core.setFailed(error.message)
   }
 }
