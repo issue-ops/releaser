@@ -113,6 +113,8 @@ describe('main.ts', () => {
       new Error('Error creating release')
     )
 
-    await expect(main.run()).rejects.toThrow('Error creating release')
+    await main.run()
+
+    expect(core.setFailed).toHaveBeenCalledWith('Error creating release')
   })
 })
