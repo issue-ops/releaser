@@ -1,11 +1,11 @@
 # IssueOps Releaser
 
-[![Check dist/](https://github.com/issue-ops/releaser/actions/workflows/check-dist.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/check-dist.yml)
-[![CodeQL](https://github.com/issue-ops/releaser/actions/workflows/codeql.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/codeql.yml)
-[![Continuous Integration](https://github.com/issue-ops/releaser/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/continuous-integration.yml)
-[![Continuous Delivery](https://github.com/issue-ops/releaser/actions/workflows/continuous-delivery.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/continuous-delivery.yml)
-[![Linter](https://github.com/issue-ops/releaser/actions/workflows/linter.yml/badge.svg)](https://github.com/issue-ops/releaser/actions/workflows/linter.yml)
-[![Code Coverage](./badges/coverage.svg)](./badges/coverage.svg)
+![Check dist/](https://github.com/issue-ops/releaser/actions/workflows/check-dist.yml/badge.svg)
+![CodeQL](https://github.com/issue-ops/releaser/actions/workflows/codeql.yml/badge.svg)
+![Continuous Integration](https://github.com/issue-ops/releaser/actions/workflows/continuous-integration.yml/badge.svg)
+![Continuous Delivery](https://github.com/issue-ops/releaser/actions/workflows/continuous-delivery.yml/badge.svg)
+![Linter](https://github.com/issue-ops/releaser/actions/workflows/linter.yml/badge.svg)
+![Code Coverage](./badges/coverage.svg)
 
 Handle releases for GitHub repositories
 
@@ -78,7 +78,7 @@ jobs:
           ref: main
 
       # Use the version output from the previous step for the release
-      # Prepend a 'v' to the beginning (e.g. 'v1.2.3')
+      # Prepends a 'v' to the beginning (e.g. 'v1.2.3')
       - name: Create Release
         id: create-release
         uses: issue-ops/releaser@vX.X.X
@@ -95,19 +95,16 @@ Actions variable.
 name: Continuous Delivery
 
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to release'
+        required: true
+        default: 'v0.0.0'
 
 # This is required to be able to update tags and create releases
 permissions:
   contents: write
-
-# This could also be a GitHub Actions variable
-env:
-  RELEASE_VERSION: v1.2.3
 
 jobs:
   release:
@@ -118,44 +115,44 @@ jobs:
     if: ${{ github.event.pull_request.merged == true }}
 
     steps:
-      # Checkout the repository with fetch-tags set to true
+      # Checkout the repository, making sure to set fetch-depth to 0 and
+      # fetch-tags set to true
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           fetch-tags: true
 
-      # Use the version from the environment variable for the release
+      # Use the version from the input variable
       - name: Create Release
         id: create-release
         uses: issue-ops/releaser@vX.X.X
         with:
-          tag: ${{ env.RELEASE_VERSION }}
+          tag: ${{ inputs.version }}
 ```
 
 ## Inputs
 
-| Input                    | Description                                       |
-| ------------------------ | ------------------------------------------------- |
-| `draft`                  | Whether or not the release should be a draft      |
-|                          | Default: `false`                                  |
-| `generate_release_notes` | Whether or not to generate release notes          |
-|                          | Default: `true`                                   |
-| `github_token`           | The token to use for authentication               |
-|                          | Default: `${{ github.token }}`                    |
-| `name`                   | The name of the release                           |
-|                          | Default: The `tag` value                          |
-| `notes`                  | The release notes, prepended to the generated     |
-|                          | notes if `generate_release_notes` is `true`       |
-| `owner`                  | The owner of the repository                       |
-|                          | Default: The owner of the workflow repository     |
-| `prerelease`             | Whether or not the release should be a prerelease |
-|                          | Default: `false`                                  |
-| `repo`                   | The repository to create the release in           |
-|                          | Default: The workflow repository                  |
-| `tag`                    | The tag to create or reference for the release    |
-| `target_commitish`       | The branch or commit SHA to tag for the release   |
-|                          | Not required if the tag already exists            |
+| Input                    | Description                                                                               |
+| ------------------------ | ----------------------------------------------------------------------------------------- |
+| `draft`                  | Whether or not the release should be a draft                                              |
+|                          | Default: `false`                                                                          |
+| `generate_release_notes` | Whether or not to generate release notes                                                  |
+|                          | Default: `true`                                                                           |
+| `github_token`           | The token to use for authentication                                                       |
+|                          | Default: `${{ github.token }}`                                                            |
+| `name`                   | The name of the release                                                                   |
+|                          | Default: The `tag` value                                                                  |
+| `notes`                  | The release notes, prepended to the generated notes if `generate_release_notes` is `true` |
+| `owner`                  | The owner of the repository                                                               |
+|                          | Default: The owner of the workflow repository                                             |
+| `prerelease`             | Whether or not the release should be a prerelease                                         |
+|                          | Default: `false`                                                                          |
+| `repo`                   | The repository to create the release in                                                   |
+|                          | Default: The workflow repository                                                          |
+| `tag`                    | The tag to create or reference for the release                                            |
+| `target_commitish`       | The branch or commit SHA to tag for the release (not required if the tag already exists)  |
 
 ## Outputs
 
