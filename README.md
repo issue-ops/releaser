@@ -66,7 +66,7 @@ jobs:
         id: checkout
         uses: actions/checkout@v4
         with:
-          fetch-tags: true
+          fetch-depth: 0
 
       # Get the version and update the tags to use in the release
       - name: Tag Commit
@@ -122,7 +122,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          fetch-tags: true
 
       # Use the version from the input variable
       - name: Create Release
