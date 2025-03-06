@@ -61,7 +61,7 @@ jobs:
     if: ${{ github.event.pull_request.merged == true }}
 
     steps:
-      # Checkout the repository with fetch-tags set to true
+      # Checkout the repository, making sure to set fetch-depth to 0
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
@@ -115,8 +115,7 @@ jobs:
     if: ${{ github.event.pull_request.merged == true }}
 
     steps:
-      # Checkout the repository, making sure to set fetch-depth to 0 and
-      # fetch-tags set to true
+      # Checkout the repository, making sure to set fetch-depth to 0
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
