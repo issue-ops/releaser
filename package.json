@@ -48,7 +48,7 @@
     "@babel/eslint-parser": "^7.26.8",
     "@eslint/compat": "^1.2.7",
     "@rollup/plugin-commonjs": "^28.0.3",
-    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.16",
