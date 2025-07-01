@@ -47,7 +47,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.27.5",
     "@eslint/compat": "^1.2.7",
-    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/jest": "^29.5.14",
