@@ -25,7 +25,7 @@ describe('main.ts', () => {
   beforeEach(() => {
     // Set the action's inputs as return values from core.getInput()
     core.getInput
-      .mockReturnValueOnce('https://api.gihub.com') // api_url
+      .mockReturnValueOnce('https://api.github.com') // api_url
       .mockReturnValueOnce('false') // draft
       .mockReturnValueOnce('true') // generate_release_notes
       .mockReturnValueOnce('v1.0.0') // name
