@@ -25,6 +25,7 @@ describe('main.ts', () => {
   beforeEach(() => {
     // Set the action's inputs as return values from core.getInput()
     core.getInput
+      .mockReturnValueOnce('https://api.github.com') // api_url
       .mockReturnValueOnce('false') // draft
       .mockReturnValueOnce('true') // generate_release_notes
       .mockReturnValueOnce('v1.0.0') // name
@@ -52,6 +53,7 @@ describe('main.ts', () => {
 
     await main.run()
 
+    expect(core.getInput).toHaveBeenCalledWith('api_url', { required: true })
     expect(core.getInput).toHaveBeenCalledWith('draft')
     expect(core.getInput).toHaveBeenCalledWith('generate_release_notes')
     expect(core.getInput).toHaveBeenCalledWith('name')
@@ -75,6 +77,7 @@ describe('main.ts', () => {
   it('Replaces name with tag when not present', async () => {
     core.getInput
       .mockClear()
+      .mockReturnValueOnce('https://api.gihub.com') // api_url
       .mockReturnValueOnce('false') // draft
       .mockReturnValueOnce('true') // generate_release_notes
       .mockReturnValueOnce('') // name

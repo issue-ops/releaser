@@ -30829,6 +30829,7 @@ const Octokit = Octokit$1.plugin(requestLog, legacyRestEndpointMethods, paginate
 
 async function run() {
     // Get the inputs
+    const apiUrl = coreExports.getInput('api_url', { required: true });
     const draft = coreExports.getInput('draft') === 'true';
     const generateReleaseNotes = coreExports.getInput('generate_release_notes') === 'true';
     /* istanbul ignore next */
@@ -30844,6 +30845,7 @@ async function run() {
     const token = coreExports.getInput('github_token', { required: true });
     // Log the inputs
     coreExports.info('Running action with the following inputs:');
+    coreExports.info(`  apiUrl: ${apiUrl}`);
     coreExports.info(`  draft: ${draft}`);
     coreExports.info(`  generateReleaseNotes: ${generateReleaseNotes}`);
     coreExports.info(`  name: ${name}`);
@@ -30854,7 +30856,7 @@ async function run() {
     coreExports.info(`  tag: ${tag}`);
     coreExports.info(`  target: ${target}`);
     // Create the Octokit client
-    const github = new Octokit({ auth: token });
+    const github = new Octokit({ auth: token, baseUrl: apiUrl });
     try {
         // Create the API options
         const options = {

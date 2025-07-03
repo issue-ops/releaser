@@ -134,6 +134,8 @@ jobs:
 
 | Input                    | Description                                                                               |
 | ------------------------ | ----------------------------------------------------------------------------------------- |
+| `api_url`                | The GitHub API URL to use                                                                 |
+|                          | Default: `${{ github.api_url }}`                                                          |
 | `draft`                  | Whether or not the release should be a draft                                              |
 |                          | Default: `false`                                                                          |
 | `generate_release_notes` | Whether or not to generate release notes                                                  |
