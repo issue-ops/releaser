@@ -4,6 +4,7 @@ import type { CreateReleaseOptions, Release } from './interfaces.js'
 
 export async function run(): Promise<void> {
   // Get the inputs
+  const apiUrl = core.getInput('api_url', { required: true })
   const draft: boolean = core.getInput('draft') === 'true'
   const generateReleaseNotes: boolean =
     core.getInput('generate_release_notes') === 'true'
@@ -23,6 +24,7 @@ export async function run(): Promise<void> {
 
   // Log the inputs
   core.info('Running action with the following inputs:')
+  core.info(`  apiUrl: ${apiUrl}`)
   core.info(`  draft: ${draft}`)
   core.info(`  generateReleaseNotes: ${generateReleaseNotes}`)
   core.info(`  name: ${name}`)
@@ -34,7 +36,7 @@ export async function run(): Promise<void> {
   core.info(`  target: ${target}`)
 
   // Create the Octokit client
-  const github: Octokit = new Octokit({ auth: token })
+  const github: Octokit = new Octokit({ auth: token, baseUrl: apiUrl })
 
   try {
     // Create the API options
